@@ -46,7 +46,7 @@ app.get('/', (request, response)=>{
 app.get('/hello', (request, response)=>{
   console.log(request.query);
 
-  let firstNAme = request.query.firstName;
+  let firstName = request.query.firstName;
   let lastName = request.query.lastName;
 
   response.status(200).send(`Hello ${firstName} ${lastName}!`)
@@ -54,12 +54,20 @@ app.get('/hello', (request, response)=>{
 
 app.get('./weather', (request, response, next)=>{
   try {
-    let species = request.query.species;
+    //ToDO- accept search queries - lat,lon, searchQuery - request.query / weather?lat=value&
 
-    let dataToGroom = data.find( pet => pet.species === species);
-    let datatoSend = new Pet(dataToGroom);
 
-    response.status(200).send(datatoSend);
+    // let lat  = request.query.lat;
+    // let lon = request.query.lon;
+    let cityName = request.query.searchQuery;
+    //TODO find the ity in the json data that matches CityName
+
+    let city = data.find(city => city.city_name.toLowerCase() === cityName.toLowerCase())
+
+    //TODO use a class to minify the bulky data
+    let weatherData = city.data.map(dayObj => new Forecast(dayObj));
+
+    response.status(200).send(city);
 
   } catch (error){
     next (error);
@@ -68,10 +76,10 @@ app.get('./weather', (request, response, next)=>{
 
 // *** Class to groom bulky data ****
 
-class Pet {
-  constructor(petOBj){
-    this.name = petOBj.name;
-    this.breed = petOBj.breed;
+class Forecast {
+  constructor(dayObj){
+    this.date = dayObj.valid_date;
+    this.description = dayObj.weather.description;
   }
 }
 
