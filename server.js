@@ -54,7 +54,7 @@ app.get('/hello', (request, response)=>{
 
 app.get('./weather', (request, response, next)=>{
   try {
-    //ToDO- accept search queries - lat,lon, searchQuery - request.query / weather?lat=value&
+    //ToDO- accept search queries - lat,lon, searchQuery - request.query / weather?lat=value&lon=value&searchQuery=value
 
 
     // let lat  = request.query.lat;
