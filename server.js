@@ -82,7 +82,7 @@ app.get('/weather', async (request, response, next)=>{
 app.get('/movie', async (request, response, next)=>{
   try {
     //ToDO- accept search queries - lat,lon, searchQuery - request.query / weather?lat=value&lon=value&searchQuery=value
-    let {cityName} = request.query;
+    let cityName = request.query.searchQuery;
     let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIES_API_KEY}&language=en-US&query=${cityName}&page=1&include_adult=false`
     console.log(url);
     let movieBit = await axios.get(url)
@@ -93,7 +93,7 @@ app.get('/movie', async (request, response, next)=>{
    
     //TODO use a class to minify the bulky data //! change this
     let movieData = movieBit.data.results.map(movieObj => new Movies(movieObj));
-
+    console.log(movieData);
     response.status(200).send(movieData);
 
   } catch (error){
