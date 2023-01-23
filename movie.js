@@ -5,15 +5,21 @@ const axios = require('axios');
 
 let cache = {};
 
-app.get('/movie', async (request, response, next)=>{
+async function getMovies(request, response, next) {
   try {
     //ToDO- accept search queries - lat,lon, searchQuery - request.query / weather?lat=value&lon=value&searchQuery=value
     let {cityName} = request.query;
     let key = `${cityName}Movie`; 
 
     if(cache[key] &&(Date.now() - cache[key].timeStamp) < 300000){
+      console.log('Cache was hit, images are present');
       response.status(200).send(cache[key].data);
+
+      
     } else {
+
+      console.log('cache missed -- no images present');
+
       let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIES_API_KEY}&language=en-US&query=${cityName}&page=1&include_adult=false`
       console.log(url);
       let movieBit = await axios.get(url)
@@ -24,7 +30,7 @@ app.get('/movie', async (request, response, next)=>{
       // *** Cache results from the api call 
       cache[key] = {
         data:movieData,
-        timeStamp: DataTransfer.now()
+        timeStamp: Date.now()
       };
       response.status(200).send(movieData);
         
@@ -35,7 +41,7 @@ app.get('/movie', async (request, response, next)=>{
     // next (error);
     console.log('this is the error',error)
   }
-})
+}
 
 class Movies {
   constructor(movieObj){
@@ -44,3 +50,5 @@ class Movies {
     this.poster_path=movieObj.poster_path;
   }
 }
+
+module.exports = getMovies;

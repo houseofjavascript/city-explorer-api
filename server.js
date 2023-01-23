@@ -10,6 +10,8 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const axios = require('axios');
+const getMovies = require('./movie')
+const getWeather = require('./weather')
 
 // ** dont forget to require your start json file //
 
@@ -53,71 +55,9 @@ app.get('/hello', (request, response)=>{
   response.status(200).send(`Hello ${firstName} ${lastName}!`)
 })
 
-app.get('/weather', async (request, response, next)=>{
-  try {
-    //ToDO- accept search queries - lat,lon, searchQuery - request.query / weather?lat=value&lon=value&searchQuery=value
-    let url = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${request.query.lat}&lon=${request.query.lon}`
-    console.log(url);
-    let weatherBit = await axios.get(url)
-    let lat  = request.query.lat;
-    let lon = request.query.lon;
-    
-    let cityName = request.query.searchQuery;
-    //TODO find the ity in the json data that matches CityName
-    console.log(cityName)
-    // let city = data.find(city => city.city_name.toLowerCase() === cityName.toLowerCase())
-    
-    // console.log('this is the weather data',weatherBit.data.data[0])
-    //TODO use a class to minify the bulky data //! change this
-    let weatherData = weatherBit.data.data.map(dayObj => new Forecast(dayObj));
-    console.log(weatherData, 'HERE')
+app.get('/weather', getWeather);
 
-    response.status(200).send(weatherData);
-
-  } catch (error){
-    next (error);
-  }
-})
-
-app.get('/movie', async (request, response, next)=>{
-  try {
-    //ToDO- accept search queries - lat,lon, searchQuery - request.query / weather?lat=value&lon=value&searchQuery=value
-    let cityName = request.query.searchQuery;
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIES_API_KEY}&language=en-US&query=${cityName}&page=1&include_adult=false`
-    console.log(url);
-    let movieBit = await axios.get(url)
-    console.log(movieBit.data.results);
- 
-    
-    //TODO find the ity in the json data that matches CityName
-   
-    //TODO use a class to minify the bulky data //! change this
-    let movieData = movieBit.data.results.map(movieObj => new Movies(movieObj));
-    console.log(movieData);
-    response.status(200).send(movieData);
-
-  } catch (error){
-    // next (error);
-    console.log('this is the error',error)
-  }
-})
-
-// *** Class to groom bulky data ****
-
-class Forecast {
-  constructor(dayObj){
-    this.date = dayObj.valid_date;
-    this.description = dayObj.weather.description;
-  }
-}
-
-class Movies {
-  constructor(movieObj){
-    this.title = movieObj.title;
-    this.overview= movieObj.overview;
-    this.poster_path=movieObj.poster_path;
-  }
-}
+app.get('/movie', getMovies);
 
 
 app.get('*', (request, response)=>{
@@ -125,7 +65,6 @@ app.get('*', (request, response)=>{
 });
 
 // ERROR Handling 
-
 app.use((error, request, response, next)=>{
   response.status(500).send(error.message);
 })
