@@ -1,5 +1,7 @@
 # city-explorer-api
 
+![City Explorer](https://user-images.githubusercontent.com/118845810/214208199-7a8a1dbf-847b-412b-b7c8-e5580740db14.png)
+
 # Project Name
 
 **Author**: Diontre Sanders
