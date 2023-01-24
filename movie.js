@@ -8,8 +8,8 @@ let cache = {};
 async function getMovies(request, response, next) {
   try {
     //ToDO- accept search queries - lat,lon, searchQuery - request.query / weather?lat=value&lon=value&searchQuery=value
-    let {cityName} = request.query;
-    let key = `${cityName}Movie`; 
+    let cityName = request.query.searchQuery;
+    let key = `Movies`; 
 
     if(cache[key] &&(Date.now() - cache[key].timeStamp) < 300000){
       console.log('Cache was hit, images are present');
@@ -24,8 +24,8 @@ async function getMovies(request, response, next) {
       console.log(url);
       let movieBit = await axios.get(url)
       let movieData = movieBit.data.results.map(movieObj => new Movies(movieObj));
-      console.log(movieBit.data.results);
-
+      console.log(movieBit.data);
+      // TODO: FIX THIS DATA
 
       // *** Cache results from the api call 
       cache[key] = {
